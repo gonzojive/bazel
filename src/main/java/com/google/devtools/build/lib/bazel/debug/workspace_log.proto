@@ -18,6 +18,8 @@ package workspace_log;
 option java_package = "com.google.devtools.build.lib.bazel.debug.proto";
 option java_outer_classname = "WorkspaceLogProtos";
 
+option go_package = "github.com/gonzojive/bazelgopackagesdriver/proto/bazelworkspacelogpb";
+
 // Information on "Execute" event in repository_ctx.
 message ExecuteEvent {
   // Command line arguments, with the first one being the command to execute.

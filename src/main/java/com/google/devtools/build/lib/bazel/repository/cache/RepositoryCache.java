@@ -18,6 +18,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.flogger.GoogleLogger;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
@@ -33,6 +34,7 @@ import javax.annotation.Nullable;
  *  TODO(jingwen): Implement file locking for concurrent cache accesses.
  */
 public class RepositoryCache {
+  private static final GoogleLogger logger = GoogleLogger.forEnclosingClass();
 
   /** The types of cache keys used. */
   public enum KeyType {
@@ -90,6 +92,11 @@ public class RepositoryCache {
   @Nullable private Path contentAddressablePath;
   private boolean useHardlinks;
 
+  public RepositoryCache() {
+    logger.atSevere().log("initialized repository cache");
+    //Preconditions.checkState(false, "this is a message about the state");
+  }
+
   public void setRepositoryCachePath(@Nullable Path repositoryCachePath) {
     this.repositoryCachePath = repositoryCachePath;
     this.contentAddressablePath = (repositoryCachePath != null)
@@ -135,6 +142,8 @@ public class RepositoryCache {
 
   public synchronized Path get(String cacheKey, Path targetPath, KeyType keyType)
       throws IOException, InterruptedException {
+    logger.atWarning().log("trying to get cacheKey %s, targetPath %s, keyType %s", cacheKey, targetPath, keyType);
+    Preconditions.checkState(false, String.format("trying to get cacheKey1 %s, targetPath %s, keyType %s", cacheKey, targetPath, keyType));
     return get(cacheKey, targetPath, keyType, null);
   }
 
@@ -162,11 +171,16 @@ public class RepositoryCache {
       throw new InterruptedException();
     }
     Preconditions.checkState(isEnabled());
+    logger.atSevere().log("trying to get cacheKey2 %s, targetPath %s, keyType %s", cacheKey, targetPath, keyType);
+    //Preconditions.checkState(false, String.format("trying to get cacheKey2 %s, targetPath %s, keyType %s, canonicalId='%s', content addressable path='%s'", cacheKey, targetPath, keyType, canonicalId, contentAddressablePath));
 
     assertKeyIsValid(cacheKey, keyType);
     if (!exists(cacheKey, keyType)) {
+      //Preconditions.checkState(false, String.format("trying to get cacheKey2.1 and doesnt exist %s, targetPath %s, keyType %s, canonicalId='%s', content addressable path='%s'", cacheKey, targetPath, keyType, canonicalId, contentAddressablePath));
       return null;
     }
+    //Preconditions.checkState(false, String.format("trying to get cacheKey2.2 exists %s, targetPath %s, keyType %s, canonicalId='%s', content addressable path='%s'", cacheKey, targetPath, keyType, canonicalId, contentAddressablePath));
+      
 
     Path cacheEntry = keyType.getCachePath(contentAddressablePath).getRelative(cacheKey);
     Path cacheValue = cacheEntry.getRelative(DEFAULT_CACHE_FILENAME);
@@ -174,10 +188,14 @@ public class RepositoryCache {
     try {
       assertFileChecksum(cacheKey, cacheValue, keyType);
     } catch (IOException e) {
+
+      //Preconditions.checkState(false, String.format("trying to get cacheKey2.3 exists bad checksum %s, targetPath %s, keyType %s, canonicalId='%s', content addressable path='%s'", cacheKey, targetPath, keyType, canonicalId, contentAddressablePath));
       // New lines because this error message gets large printing multiple absolute filepaths.
       throw new IOException(e.getMessage() + "\n\n"
           + "Please delete the directory " + cacheEntry + " and try again.");
     }
+    //Preconditions.checkState(false, String.format("trying to get cacheKey2.4 all good so far checksum %s, targetPath %s, keyType %s, canonicalId='%s', content addressable path='%s'", cacheKey, targetPath, keyType, canonicalId, contentAddressablePath));
+      
 
     if (!Strings.isNullOrEmpty(canonicalId)) {
       if (!hasCanonicalId(cacheKey, keyType, canonicalId)) {
