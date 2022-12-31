@@ -25,7 +25,8 @@ Requirements for an output directory layout:
 The solution that's currently implemented:
 
 * Bazel must be invoked from a directory containing a WORKSPACE file (the
-  "_workspace directory_"), or a subdirectory thereof. It reports an error if it
+  "_workspace directory_
+  "), or a subdirectory thereof. It reports an error if it
   is not.
 * The _outputRoot_ directory defaults to `~/.cache/bazel` on Linux,
   `/private/var/tmp` on macOS, and on Windows it defaults to `%HOME%` if set,
@@ -96,7 +97,7 @@ The directories are laid out as follows:
                                               actions run in a directory that mimics execroot.
                                               Implementation details, such as where the directories
                                               are created, are intentionally hidden from the action.
-                                              All actions can access its inputs and outputs relative
+                                              Every action can access its inputs and outputs relative
                                               to the execroot directory.
         &lt;workspace-name&gt;/                 <== Working tree for the Bazel build & root of symlink forest: execRoot
           _bin/                           <== Helper tools are linked from or copied to here.
